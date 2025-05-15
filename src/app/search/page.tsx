@@ -91,11 +91,29 @@ const mockInfluencers = [
   },
 ];
 
+interface Influencer {
+  id: number;
+  name: string;
+  username: string;
+  platform: string;
+  followers: string;
+  engagement: string;
+  niche: string;
+  image: string;
+}
+
+interface Filters {
+  platform?: string[];
+  minFollowers?: number;
+  minEngagement?: number;
+  niches?: string[];
+}
+
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<any>({});
-  const [filteredInfluencers, setFilteredInfluencers] = useState(mockInfluencers);
+  const [activeFilters, setActiveFilters] = useState<Filters>({});
+  const [filteredInfluencers, setFilteredInfluencers] = useState<Influencer[]>(mockInfluencers);
   const [isLoading, setIsLoading] = useState(false);
 
   // Apply search and filters
@@ -120,9 +138,10 @@ const SearchPage = () => {
       
       // Apply platform filter
       if (activeFilters.platform && activeFilters.platform.length > 0) {
-        results = results.filter((influencer) =>
-          activeFilters.platform.map((p: string) => p.toLowerCase()).includes(influencer.platform.toLowerCase())
-        );
+        results = results.filter((influencer) => {
+          const platforms = activeFilters.platform || [];
+          return platforms.map(p => p.toLowerCase()).includes(influencer.platform.toLowerCase());
+        });
       }
       
       // Apply followers filter
@@ -131,7 +150,7 @@ const SearchPage = () => {
           const followers = parseFloat(influencer.followers.replace(/[^0-9.]/g, '')) * 
                          (influencer.followers.includes('M') ? 1000000 : 
                           influencer.followers.includes('K') ? 1000 : 1);
-          return followers >= activeFilters.minFollowers;
+          return followers >= (activeFilters.minFollowers || 0);
         });
       }
       
@@ -139,15 +158,16 @@ const SearchPage = () => {
       if (activeFilters.minEngagement && activeFilters.minEngagement > 0) {
         results = results.filter((influencer) => {
           const engagement = parseFloat(influencer.engagement);
-          return engagement >= activeFilters.minEngagement;
+          return engagement >= (activeFilters.minEngagement || 0);
         });
       }
       
       // Apply niches filter
       if (activeFilters.niches && activeFilters.niches.length > 0) {
-        results = results.filter((influencer) =>
-          activeFilters.niches.map((n: string) => n.toLowerCase()).includes(influencer.niche.toLowerCase())
-        );
+        results = results.filter((influencer) => {
+          const niches = activeFilters.niches || [];
+          return niches.map(n => n.toLowerCase()).includes(influencer.niche.toLowerCase());
+        });
       }
       
       setFilteredInfluencers(results);
@@ -161,7 +181,7 @@ const SearchPage = () => {
     setSearchQuery(query);
   };
 
-  const handleApplyFilters = (filters: any) => {
+  const handleApplyFilters = (filters: Filters) => {
     setActiveFilters(filters);
     setIsFilterSidebarOpen(false);
   };
@@ -218,12 +238,12 @@ const SearchPage = () => {
                 Platforms: {activeFilters.platform.join(', ')}
               </div>
             )}
-            {activeFilters.minFollowers > 0 && (
+            {activeFilters.minFollowers && activeFilters.minFollowers > 0 && (
               <div className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">
                 Min Followers: {activeFilters.minFollowers.toLocaleString()}
               </div>
             )}
-            {activeFilters.minEngagement > 0 && (
+            {activeFilters.minEngagement && activeFilters.minEngagement > 0 && (
               <div className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">
                 Min Engagement: {activeFilters.minEngagement}%
               </div>

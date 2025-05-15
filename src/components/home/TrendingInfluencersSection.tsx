@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -87,13 +87,13 @@ const TrendingInfluencersSection = () => {
   const itemsPerPage = 3;
   const totalPages = Math.ceil(influencers.length / itemsPerPage);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % totalPages);
-  };
+  }, [totalPages]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setActiveIndex((prevIndex) => (prevIndex - 1 + totalPages) % totalPages);
-  };
+  }, [totalPages]);
 
   // Auto-play carousel
   useEffect(() => {
@@ -101,7 +101,7 @@ const TrendingInfluencersSection = () => {
       nextSlide();
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [nextSlide]);
 
   const getPaginatedInfluencers = () => {
     const startIndex = activeIndex * itemsPerPage;

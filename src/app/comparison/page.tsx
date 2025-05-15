@@ -70,10 +70,25 @@ const mockInfluencers = [
   },
 ];
 
+interface Influencer {
+  id: number;
+  name: string;
+  username: string;
+  platform: string;
+  followers: string;
+  engagement: string;
+  niche: string;
+  image: string;
+  postsPerWeek: number;
+  audienceGender: { female: number; male: number };
+  audienceAge: { [key: string]: number };
+  avgLikes: string;
+  avgComments: string;
+}
+
 const ComparisonPage = () => {
-  const [selectedInfluencers, setSelectedInfluencers] = useState<any[]>([]);
+  const [selectedInfluencers, setSelectedInfluencers] = useState<Influencer[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Preselect two influencers for demo purposes
@@ -98,7 +113,7 @@ const ComparisonPage = () => {
     }
   };
 
-  const addInfluencer = (influencer: any) => {
+  const addInfluencer = (influencer: Influencer) => {
     if (selectedInfluencers.some(inf => inf.id === influencer.id)) return;
     setSelectedInfluencers([...selectedInfluencers, influencer]);
     setShowDropdown(false);
@@ -321,7 +336,7 @@ const ComparisonPage = () => {
                   {selectedInfluencers.map((influencer) => (
                     <td key={influencer.id} className="py-4 px-6 text-sm text-gray-500">
                       <div className="space-y-1">
-                        {Object.entries(influencer.audienceAge).map(([age, percentage]: [string, any]) => (
+                        {Object.entries(influencer.audienceAge).map(([age, percentage]: [string, number]) => (
                           <div key={age} className="flex items-center">
                             <span className="w-12 text-xs">{age}:</span>
                             <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden ml-2">

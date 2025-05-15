@@ -4,10 +4,17 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaFilter, FaTimes, FaInstagram, FaTiktok, FaYoutube, FaTwitter, FaFacebook } from 'react-icons/fa';
 
+interface Filters {
+  platform: string[];
+  minFollowers: number;
+  minEngagement: number;
+  niches: string[];
+}
+
 interface FiltersProps {
   isOpen: boolean;
   onClose: () => void;
-  onApplyFilters: (filters: any) => void;
+  onApplyFilters: (filters: Filters) => void;
 }
 
 const FiltersSidebar: React.FC<FiltersProps> = ({ isOpen, onClose, onApplyFilters }) => {

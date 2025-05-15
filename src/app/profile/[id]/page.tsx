@@ -4,8 +4,37 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { FaInstagram, FaTiktok, FaYoutube, FaTwitter, FaFacebook, FaExternalLinkAlt, FaArrowLeft } from 'react-icons/fa';
 import EngagementChart from '@/components/profile/EngagementChart';
+
+interface TopPost {
+  id: number;
+  image: string;
+  likes: string;
+  comments: string;
+}
+
+interface Brand {
+  id: number;
+  name: string;
+  logo: string;
+}
+
+interface Influencer {
+  id: number;
+  name: string;
+  username: string;
+  platform: string;
+  followers: string;
+  engagement: string;
+  niche: string;
+  image: string;
+  location: string;
+  bio: string;
+  topPosts: TopPost[];
+  collaboratedBrands: Brand[];
+}
 
 // Mock data for an influencer
 const mockInfluencers = [
@@ -34,21 +63,23 @@ const mockInfluencers = [
   // Add more mock influencers here with different IDs if needed
 ];
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
-  const [influencer, setInfluencer] = useState<any>(null);
+export default function ProfilePage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [influencer, setInfluencer] = useState<Influencer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     // Simulate API call to get influencer data
     const timer = setTimeout(() => {
-      const foundInfluencer = mockInfluencers.find(inf => inf.id.toString() === params.id);
+      const foundInfluencer = mockInfluencers.find(inf => inf.id.toString() === id);
       setInfluencer(foundInfluencer || mockInfluencers[0]); // Fallback to first one if not found
       setIsLoading(false);
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [params.id]);
+  }, [id]);
 
   // Get platform icon
   const getPlatformIcon = (platform: string) => {
@@ -176,7 +207,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
         >
           <h2 className="text-2xl font-bold mb-6">Top Performing Posts</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {influencer.topPosts.map((post: any, index: number) => (
+            {influencer.topPosts.map((post: TopPost, index: number) => (
               <motion.div
                 key={post.id}
                 className="bg-white rounded-xl overflow-hidden shadow-sm relative"
@@ -225,7 +256,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
         >
           <h2 className="text-2xl font-bold mb-6">Collaborated Brands</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-            {influencer.collaboratedBrands.map((brand: any, index: number) => (
+            {influencer.collaboratedBrands.map((brand: Brand, index: number) => (
               <motion.div
                 key={brand.id}
                 className="bg-white p-4 rounded-xl flex items-center justify-center shadow-sm"

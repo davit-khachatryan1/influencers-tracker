@@ -100,7 +100,7 @@ const Footer = () => {
                 {section.title}
               </h3>
               <ul className="space-y-2">
-                {section.links.map((link, linkIndex) => (
+                {section.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.path}
